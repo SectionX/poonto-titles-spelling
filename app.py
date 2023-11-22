@@ -2,8 +2,15 @@ from Modules.PoontoTitle import Title
 import pandas as pd
 import multiprocessing
 import os
-import sys
-#from time import perf_counter
+import argparse
+from time import perf_counter
+
+
+parser = argparse.ArgumentParser(
+    prog = 'Poonto Titles Spellfix',
+    description='Reads titles from a worksheet and fixes format and spelling mistakes.'
+)
+parser.add_argument('-t', '--threaded', action='store_true', default=False, help='Utilizes half the cpu threads')
 
 class Worksheet:
 
@@ -27,12 +34,10 @@ def import_worksheets() -> list[Worksheet]:
 def process_worksheets(worksheets: list[Worksheet], threads=multiprocessing.cpu_count() // 2):
 
     threaded = False
-    if len(sys.argv) > 1:
-        if '-threaded' in sys.argv:
-            threaded = True
+    args = parser.parse_args()
 
     for worksheet in worksheets:
-        if threaded and threads > 1:
+        if args.threaded and threads > 1:
             with multiprocessing.Pool(threads) as pool:
                 results = pool.map(Title, worksheet.titles)
         else:
@@ -48,6 +53,6 @@ def main():
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()
-#    start = perf_counter()
+    start = perf_counter()
     main()
- #   print(perf_counter() - start)
+    print(perf_counter() - start)
