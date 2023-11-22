@@ -17,6 +17,20 @@ class Title:
     final_words: list[str]
     word: str
     dictionary: enchant.Dict = enchant.Dict('el_GR')
+    dictionary.add('ριχτάρι') # !
+    dictionary.add('κουβερτοπάπλωμα')
+    dictionary.add('πολυρεζίν')
+    dictionary.add('φοντανιέρα')
+    dictionary.add('μπισκοτιέρα')
+    dictionary.add('τουρτιέρα')
+    dictionary.add('κασπώ')
+    dictionary.add('ραφιέρα')
+    dictionary.add('αφρικανός')
+    dictionary.add('αφρικάνα')
+    dictionary.add('αφρικανή')
+    dictionary.add('αλουμίνιο')
+
+
     requires_more_editing: bool = False
     cut_words = set()
     logs: str
@@ -38,7 +52,13 @@ class Title:
         'πολυρεζιν': 'πολυρεζίν',
         'χρυση': 'χρυσή',
         'ριχταρι': 'ριχτάρι',
-        'δωρο': 'δώρο'
+        'δωρο': 'δώρο',
+        'ρολοι': 'ρολόι',
+        'φοντανιερα': 'φοντανιέρα',
+        'μπισκοτιερα': 'μπισκοτιέρα',
+        'κασπω': 'κασπώ',
+        'κασπο': 'κασπώ',
+        'αλουμ': 'αλουμίνιο'
     }
 
     def __init__(self, title: str):
@@ -62,13 +82,17 @@ class Title:
         word = self.word
         if word.isalpha():
             return
+        elif len(word) == 1:
+            self.log(f"Word {word} is probably a symbol, ignoring")
+
         else:
             self.log(f"Word {word} is probably dimensions and it will be fixed based on custom rules")
+            word = re.sub(r'\s?(ΤΜ[XΧ]|ΤΕΜ)\.?', r' τεμ. ', word.upper())
             word = re.sub(r'(\d)[ΧχXx](\d)', r'\1x\2', word)
             word = re.sub(r'(\d)[ΕεEeCc][KkΚκMm]\.?', r'\1 εκ.', word)
             word = re.sub(r'(\d)[MmΜμ][LlΛλ]\.?', r'\1 ml', word)
-            self.final_words.append(word)
-            self.interrupt = True
+        self.final_words.append(word)
+        self.interrupt = True
 
     def latin(self):
         if self.interrupt == True: return
@@ -83,25 +107,24 @@ class Title:
             is_ascii = True
 
         if is_ascii:
-            self.log('Word is not greek, ignoring')
+            self.log(f'Word {word} is not greek, ignoring')
             self.final_words.append(word.title())
             self.interrupt = True
         
         else:
             if ascii_counter == 0:
-                self.log('Word is probably greek, resuming')
+                #self.log(f'Word {word} is probably greek, resuming')
+                pass
             elif ascii_counter > 0:
-                self.log('Word contains non greek characters, attempting to correct')
+                self.log(f'Word {word} contains non greek characters, attempting to correct')
                 self.word = self.correct(word)
                 self.log(f'Word {word.lower()} was changed to {self.word.lower()}')
+
 
     def helperwords(self):
         if self.interrupt == True: return
         word = self.word
 
-        if word == 'τεμ.':
-            self.final_words.append(final_word)
-            self.interrupt = True
         if len(word) < 3:
             self.log(f"Word {word} is helper and it will be ignored")
             final_word = word.lower()
@@ -160,9 +183,9 @@ class Title:
         self.preprocessed_title = re.sub(r'(\w)-(\D)', r'\1 \2', self.preprocessed_title)
         self.preprocessed_title = re.sub(r'(\d)[TtΤτ][EeΕε][ΜμMm].?', r'\1 τεμ.', self.preprocessed_title)
         self.preprocessed_title = self.preprocessed_title.replace('"', '').replace("'", "")
-        self.preprocessed_title = re.sub(r'(\w)\.(\w)', r'\1. \2', self.preprocessed_title)
+        self.preprocessed_title = re.sub(r'(\D)\.(\w)', r'\1. \2', self.preprocessed_title)
         self.preprocessed_title = self.preprocessed_title.replace('/', ' / ').replace('\\', ' \ ')
-        self.preprocessed_title = re.sub(r'(\w\.?),', r'\1 , ', self.preprocessed_title)
+        self.preprocessed_title = re.sub(r'(\D\.?),', r'\1 , ', self.preprocessed_title)
         self.words = self.preprocessed_title.split()
         self.alnum_words = [word for word in self.words if len(word) > 1 and not word.isalpha()]
         
@@ -195,6 +218,8 @@ class Title:
         self.corrected_title = self.corrected_title.replace('..', '.')
         self.corrected_title = self.corrected_title.replace(' , ', ', ')
         self.corrected_title = self.corrected_title.replace('Ivory', 'Ιβουάρ')
+        self.corrected_title = re.sub(r'(\d+x\d+)\s([^ε])', r'\1 εκ. \2', self.corrected_title)
+        self.corrected_title = re.sub(r'\s+', r' ', self.corrected_title)
 
 
     def __repr__(self) -> str:

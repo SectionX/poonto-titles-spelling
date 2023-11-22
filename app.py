@@ -17,7 +17,7 @@ class Worksheet:
 
 
 def import_worksheets() -> list[Worksheet]:
-    files = os.listdir('Worksheets')
+    files = [file for file in os.listdir('Worksheets') if file.endswith('.xlsx')]
     worksheets: list[Worksheet] = []
     for file in files:
         worksheets.append(Worksheet(file))
