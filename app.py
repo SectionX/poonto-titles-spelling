@@ -33,7 +33,6 @@ def import_worksheets() -> list[Worksheet]:
 
 def process_worksheets(worksheets: list[Worksheet], threads=multiprocessing.cpu_count() // 2):
 
-    threaded = False
     args = parser.parse_args()
 
     for worksheet in worksheets:

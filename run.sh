@@ -1,1 +1,1 @@
-python app.py -threaded
+python app.py -t

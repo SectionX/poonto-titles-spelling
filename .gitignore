@@ -6,3 +6,4 @@ Worksheets/*
 .venv
 .env
 venv_activation.sh
+run.sh
