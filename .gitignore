@@ -1,6 +1,6 @@
 code.sh
-Output/*.xlsx
-Worksheets/*.xlsx
+Output/*
+Worksheets/*
 *.xlsx
 */__pycache__
 .venv
