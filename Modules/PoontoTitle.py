@@ -34,6 +34,12 @@ class Title:
                 "t":"τ",
                 "x":"χ",
                 }
+    custom_corrections = {
+        'πολυρεζιν': 'πολυρεζίν',
+        'χρυση': 'χρυσή',
+        'ριχταρι': 'ριχτάρι',
+        'δωρο': 'δώρο'
+    }
 
     def __init__(self, title: str):
         self.title = title
@@ -118,6 +124,12 @@ class Title:
     def spellcheck(self):
         if self.interrupt == True: return
         word = self.word.lower()
+
+        if word in self.custom_corrections:
+            self.log(f"Word {word} was found in the custom list and was corrected accordingly")
+            self.final_words.append(self.custom_corrections[word].title())
+            return
+
         is_correct = self.dictionary.check(word)
         if is_correct:
             self.log(f"Word {word} is found to be correct.")
@@ -182,6 +194,7 @@ class Title:
         # remove double periods
         self.corrected_title = self.corrected_title.replace('..', '.')
         self.corrected_title = self.corrected_title.replace(' , ', ', ')
+        self.corrected_title = self.corrected_title.replace('Ivory', 'Ιβουάρ')
 
 
     def __repr__(self) -> str:

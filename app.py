@@ -1,11 +1,9 @@
-#!/usr/bin/python3
-
 from Modules.PoontoTitle import Title
 import pandas as pd
 import multiprocessing
 import os
 import sys
-from time import perf_counter
+#from time import perf_counter
 
 class Worksheet:
 
@@ -50,6 +48,6 @@ def main():
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()
-    start = perf_counter()
+#    start = perf_counter()
     main()
-    print(perf_counter() - start)
+ #   print(perf_counter() - start)

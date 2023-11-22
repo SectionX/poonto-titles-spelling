@@ -2,3 +2,7 @@ code.sh
 Output/*.xlsx
 Worksheets/*.xlsx
 *.xlsx
+*/__pycache__
+.venv
+.env
+venv_activation.sh
